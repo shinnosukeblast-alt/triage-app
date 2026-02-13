@@ -26,10 +26,54 @@ if not check_password():
 st.set_page_config(page_title="美.design 人材トリアージ", layout="wide")
 
 # スタイル調整
+# --- デザインの集中管理 (CSS) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #f4f7f6; }
-    .stButton>button { width: 100%; border-radius: 8px; font-weight: bold; background-color: #2c3e50; color: white; }
+    /* 全体の背景色：清潔感のある薄いグレー */
+    .stApp { background-color: #F8F9FA; font-family: 'Noto Sans JP', sans-serif; }
+    
+    /* ログイン画面のボックス */
+    .stTextInput > div > div > input {
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    /* ボタンのデザイン：サロンらしい落ち着いたネイビー */
+    .stButton>button {
+        width: 100%;
+        border-radius: 25px;
+        font-weight: bold;
+        background-color: #2C3E50;
+        color: white;
+        border: none;
+        transition: 0.3s;
+        height: 3em;
+    }
+    .stButton>button:hover {
+        background-color: #34495E;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* スタッフカードのデザイン */
+    .staff-card {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+        border-top: 5px solid #eee;
+    }
+    
+    /* トリアージバッジ */
+    .triage-badge {
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
