@@ -5,54 +5,60 @@ from datetime import datetime
 # --- 1. 基本設定 ---
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 # --- デザインの適用 (CSS) ---
+# --- デザインの適用 (CSS: 青×白スタイル) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
     
-    /* 全体の背景と文字色を黒に固定 */
-    .stApp { 
-        background-color: #F4F7F6; 
-        font-family: 'Noto Sans JP', sans-serif;
-        color: #000000 !important; /* 基本の文字を黒に */
+    /* --- 基本カラー定義 --- */
+    :root {
+        --primary-blue: #0056b3;    /* 濃いめの青（ボタン、見出し） */
+        --light-blue: #eef7fc;      /* 背景の薄い青 */
+        --card-bg: #ffffff;         /* カードの白 */
+        --text-main: #333333;       /* 基本文字色（黒に近いグレー） */
     }
 
-    /* 全ヘッダー（h1, h2, h3, h4）を黒に */
-    h1, h2, h3, h4, .stMarkdown p { 
-        color: #000000 !important; 
-        font-weight: 700 !important; 
-    }
+    /* --- 全体の背景 --- */
+    .stApp { background-color: var(--light-blue); font-family: 'Noto Sans JP', sans-serif; }
+    h1, h2, h3, h4, h5, .stMarkdown p, .stSelectbox label { color: var(--primary-blue) !important; font-weight: 700 !important; }
 
-    /* ヘッダー部分 */
+    /* --- ヘッダー --- */
     .main-header {
-        background: white; padding: 15px 25px; border-radius: 12px; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
+        background: linear-gradient(135deg, var(--primary-blue), #007bff); /* 青のグラデーション */
+        padding: 20px 25px; border-radius: 12px; 
+        box-shadow: 0 4px 15px rgba(0,86,179,0.2); margin-bottom: 25px;
     }
-    .main-header h1 { color: #000000 !important; }
+    .main-header h1 { color: white !important; font-size: 1.8rem; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    /* スタッフカード */
+    /* --- スタッフカード --- */
     .staff-card {
-        background: white; padding: 20px; border-radius: 12px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border-top: 5px solid #ddd;
+        background: var(--card-bg); padding: 20px; border-radius: 12px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #dbe9f5;
     }
 
-    /* メモ欄の文字を真っ黒に */
+    /* --- メモ欄（青白い背景で統一） --- */
     .staff-memo {
-        background-color: #F9F9F9; padding: 12px; border-radius: 8px;
-        font-size: 0.95rem; 
-        color: #000000 !important; /* ここをグレーから黒に変更 */
-        margin-top: 15px; border-left: 4px solid #333;
+        background-color: #f8fbff; padding: 12px; border-radius: 8px;
+        font-size: 0.95rem; color: var(--text-main) !important;
+        margin-top: 15px; border-left: 4px solid var(--primary-blue);
     }
 
-    /* 先月の状態ラベル */
-    .last-month-label {
-        color: #000000 !important;
-        font-weight: bold;
+    /* --- ボタン（青色のグラデーション） --- */
+    .stButton > button {
+        background: linear-gradient(to bottom, #0069d9, var(--primary-blue));
+        border: none; box-shadow: 0 4px 6px rgba(0,86,179,0.2);
+    }
+    .stButton > button:hover {
+        background: linear-gradient(to bottom, var(--primary-blue), #004494);
+        transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,86,179,0.3);
     }
 
-    /* トリアージバッジ（ここだけは読みやすさのため背景色に合わせて白文字を維持） */
+    /* --- バッジ（視認性のため元の色を維持しつつ、黄色は文字を黒に） --- */
     .badge-red, .badge-green, .badge-blue { color: white !important; }
-    .badge-yellow { color: #000000 !important; } /* 黄色バッジだけは黒文字 */
+    .badge-yellow { color: var(--text-main) !important; background-color: #FFC107; }
+    
+    /* --- 選択ボックスなど --- */
+    .stSelectbox div[data-baseweb="select"] { border-color: var(--primary-blue); }
     </style>
     """, unsafe_allow_html=True)
 
