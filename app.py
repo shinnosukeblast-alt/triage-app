@@ -6,59 +6,69 @@ from datetime import datetime
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 # --- デザインの適用 (CSS) ---
 # --- デザインの適用 (CSS: 青×白スタイル) ---
+# --- デザインの適用 (青×白・ブラッシュアップ版) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
     
-    /* --- 基本カラー定義 --- */
-    :root {
-        --primary-blue: #0056b3;    /* 濃いめの青（ボタン、見出し） */
-        --light-blue: #eef7fc;      /* 背景の薄い青 */
-        --card-bg: #ffffff;         /* カードの白 */
-        --text-main: #333333;       /* 基本文字色（黒に近いグレー） */
-    }
-
-    /* --- 全体の背景 --- */
-    .stApp { background-color: var(--light-blue); font-family: 'Noto Sans JP', sans-serif; }
-    h1, h2, h3, h4, h5, .stMarkdown p, .stSelectbox label { color: var(--primary-blue) !important; font-weight: 700 !important; }
-
-    /* --- ヘッダー --- */
-    .main-header {
-        background: linear-gradient(135deg, var(--primary-blue), #007bff); /* 青のグラデーション */
-        padding: 20px 25px; border-radius: 12px; 
-        box-shadow: 0 4px 15px rgba(0,86,179,0.2); margin-bottom: 25px;
-    }
-    .main-header h1 { color: white !important; font-size: 1.8rem; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-    /* --- スタッフカード --- */
-    .staff-card {
-        background: var(--card-bg); padding: 20px; border-radius: 12px; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #dbe9f5;
-    }
-
-    /* --- メモ欄（青白い背景で統一） --- */
-    .staff-memo {
-        background-color: #f8fbff; padding: 12px; border-radius: 8px;
-        font-size: 0.95rem; color: var(--text-main) !important;
-        margin-top: 15px; border-left: 4px solid var(--primary-blue);
-    }
-
-    /* --- ボタン（青色のグラデーション） --- */
-    .stButton > button {
-        background: linear-gradient(to bottom, #0069d9, var(--primary-blue));
-        border: none; box-shadow: 0 4px 6px rgba(0,86,179,0.2);
-    }
-    .stButton > button:hover {
-        background: linear-gradient(to bottom, var(--primary-blue), #004494);
-        transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,86,179,0.3);
-    }
-
-    /* --- バッジ（視認性のため元の色を維持しつつ、黄色は文字を黒に） --- */
-    .badge-red, .badge-green, .badge-blue { color: white !important; }
-    .badge-yellow { color: var(--text-main) !important; background-color: #FFC107; }
+    /* --- 基本設定 --- */
+    .stApp { background-color: #f0f4f8; font-family: 'Noto Sans JP', sans-serif; }
     
-    /* --- 選択ボックスなど --- */
-    .stSelectbox div[data-baseweb="select"] { border-color: var(--primary-blue); }
+    /* --- ヘッダー（シャドウ強化） --- */
+    .main-header {
+        background: linear-gradient(135deg, #0056b3, #007bff);
+        padding: 20px 25px; border-radius: 15px; 
+        box-shadow: 0 10px 20px rgba(0,86,179,0.15); margin-bottom: 30px;
+    }
+    .main-header h1 { color: white !important; margin: 0; font-size: 1.6rem; }
+
+    /* --- 店舗選択・入力欄（白背景・黒文字・シャドウ） --- */
+    div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {
+        background-color: white !important;
+        color: #000000 !important;
+        border-radius: 10px !important;
+        border: 1px solid #dbe9f5 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+    /* 選択中の文字色も黒に固定 */
+    div[data-baseweb="select"] * { color: #000000 !important; }
+
+    /* --- スタッフカード（シャドウ強化・丸み） --- */
+    .staff-card {
+        background: white; padding: 22px; border-radius: 18px; 
+        box-shadow: 0 12px 24px rgba(0,0,0,0.07); /* シャドウを深めに */
+        border: 1px solid #eef2f6; transition: 0.3s;
+    }
+    .staff-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+    /* --- トリアージバッジ（丸みを最大に：ピル型） --- */
+    .triage-badge {
+        display: inline-block; padding: 6px 16px; 
+        border-radius: 50px !important; /* ここでしっかり丸みを出します */
+        font-size: 0.85rem; font-weight: 700; color: white; margin-top: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .badge-red { background-color: #FF4D4D; }
+    .badge-yellow { background-color: #FFC107; color: #000000 !important; }
+    .badge-green { background-color: #2ECC71; }
+    .badge-blue { background-color: #3498DB; }
+
+    /* --- メモ欄 --- */
+    .staff-memo {
+        background-color: #f8fbff; padding: 14px; border-radius: 12px;
+        font-size: 0.95rem; color: #000000 !important;
+        margin-top: 15px; border-left: 5px solid #0056b3;
+    }
+
+    /* --- 更新ボタン・アコーディオン（文字色を黒に） --- */
+    /* st.expanderの見出しテキストを黒に固定 */
+    .st-ae summary p { color: #000000 !important; font-weight: bold !important; }
+    
+    .stButton > button {
+        background: linear-gradient(to bottom, #0069d9, #0056b3);
+        border: none; border-radius: 10px; padding: 12px;
+        box-shadow: 0 6px 15px rgba(0,86,179,0.2); color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
