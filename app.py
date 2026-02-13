@@ -4,9 +4,6 @@ from datetime import datetime
 
 # --- 1. 基本設定 ---
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
-
-# --- 2. デザインの適用 (CSS) ---
-# --- デザインの適用 (CSS) ---
 # --- デザインの適用 (CSS) ---
 st.markdown("""
     <style>
