@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- 1. 基本設定 ---
-st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
+st.set_page_config(page_title="人材トリアージ", layout="wide", page_icon="💎")
 
 # --- 2. デザインの適用 (アイスブルー × ホワイト・プロフェッショナル版) ---
 st.markdown("""
@@ -23,7 +23,7 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         background: rgba(240, 248, 255, 0.6) !important;
         backdrop-filter: blur(15px) !important;
-        -webkit-backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(25px) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.5);
         box-shadow: 5px 0 20px rgba(0, 86, 179, 0.05);
     }
