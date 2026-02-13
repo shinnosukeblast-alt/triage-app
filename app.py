@@ -5,20 +5,27 @@ from datetime import datetime
 # --- 1. 基本設定 ---
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 
-# --- 2. デザインの適用 (CSS: 文字色黒統一 & アニメーション強化版) ---
+# --- 2. デザインの適用 (CSS: ボタン青色変更 & 黒背景文字白色化) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
     
     .stApp { background-color: #f0f4f8; font-family: 'Noto Sans JP', sans-serif; }
     
-    /* --- 全テキストを強制的に黒 (#000000) に --- */
-    h1, h2, h3, h4, h5, p, span, label, div, input, textarea, .st-ae summary p { 
+    /* --- 基本のテキスト色を黒に設定 --- */
+    h1, h2, h3, h4, h5, p, span, label, div, input, textarea { 
         color: #000000 !important; 
         font-weight: 700 !important; 
     }
 
-    /* --- サイドバー（ガラス風 + 黒文字） --- */
+    /* --- 【修正】黒背景になっている部分（エクスパンダーのヘッダー）の文字色を白にする --- */
+    /* .st-ae summary は折りたたみメニューのタイトル部分です */
+    .st-ae summary p, .st-ae summary svg {
+        color: #ffffff !important; /* 文字色を白に */
+        fill: #ffffff !important;  /* アイコンの色も白に */
+    }
+
+    /* --- サイドバー --- */
     section[data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.4) !important;
         backdrop-filter: blur(12px) !important;
@@ -45,7 +52,7 @@ st.markdown("""
     }
     .main-header h1 { color: white !important; margin: 0; font-size: 1.6rem; }
 
-    /* --- スタッフカード（シャドウ強化） --- */
+    /* --- スタッフカード --- */
     .staff-card {
         background: white; padding: 22px; border-radius: 18px; 
         box-shadow: 0 12px 24px rgba(0,0,0,0.07);
@@ -53,20 +60,20 @@ st.markdown("""
     }
     .staff-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
-    /* --- ボタンのアニメーション（色を変えず、動きのみ） --- */
+    /* --- 【修正】ボタンの色とアニメーション --- */
     .stButton > button {
-        background: linear-gradient(to bottom, #0069d9, #0056b3) !important;
+        /* きれいなうすい青のグラデーションに変更 */
+        background: linear-gradient(to bottom, #4facfe, #00f2fe) !important;
         border: none; border-radius: 10px; padding: 12px;
-        box-shadow: 0 6px 15px rgba(0,86,179,0.2); 
-        color: white !important;
-        transition: transform 0.2s, box-shadow 0.2s !important;
+        box-shadow: 0 6px 15px rgba(79, 172, 254, 0.3); 
+        color: white !important; /* 文字色は白 */
+        transition: transform 0.2s, box-shadow 0.2s, background 0.2s !important;
     }
     .stButton > button:hover {
-        /* 色（background）は変えず、アニメーションのみ実行 */
-        background: linear-gradient(to bottom, #0069d9, #0056b3) !important;
+        /* ホバー時は少し明るく */
+        background: linear-gradient(to bottom, #74b9ff, #4facfe) !important;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,86,179,0.3);
-        color: white !important;
+        box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
     }
 
     /* バッジ */
