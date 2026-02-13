@@ -6,57 +6,55 @@ from datetime import datetime
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 
 # --- 2. デザインの適用 (CSS) ---
+# --- デザインの適用 (CSS) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
     
-    /* 全体の背景とフォント */
-    .stApp { background-color: #F4F7F6; font-family: 'Noto Sans JP', sans-serif; }
-    h1, h2, h3 { color: #2C3E50; font-weight: 700 !important; }
+    /* 全体の背景と文字色を黒に固定 */
+    .stApp { 
+        background-color: #F4F7F6; 
+        font-family: 'Noto Sans JP', sans-serif;
+        color: #000000 !important; /* 基本の文字を黒に */
+    }
+
+    /* 全ヘッダー（h1, h2, h3, h4）を黒に */
+    h1, h2, h3, h4, .stMarkdown p { 
+        color: #000000 !important; 
+        font-weight: 700 !important; 
+    }
 
     /* ヘッダー部分 */
-    header[data-testid="stHeader"] { background-color: transparent; }
     .main-header {
-        display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-        background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        background: white; padding: 15px 25px; border-radius: 12px; 
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
     }
-    .main-header h1 { margin: 0; font-size: 1.5rem; color: #2C3E50; }
+    .main-header h1 { color: #000000 !important; }
 
     /* スタッフカード */
     .staff-card {
-        background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        transition: transform 0.2s; border-top: 5px solid #ddd;
+        background: white; padding: 20px; border-radius: 12px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border-top: 5px solid #ddd;
     }
-    .staff-card:hover { transform: translateY(-3px); }
 
-    /* トリアージの色定義 */
-    .triage-red { border-top-color: #FF4D4D !important; }
-    .triage-yellow { border-top-color: #FFC107 !important; }
-    .triage-green { border-top-color: #2ECC71 !important; }
-    .triage-blue { border-top-color: #3498DB !important; }
-
-    /* バッジのデザイン */
-    .triage-badge {
-        display: inline-block; padding: 5px 12px; border-radius: 20px;
-        font-size: 0.85rem; font-weight: 700; color: white; margin-top: 10px;
-    }
-    .badge-red { background-color: #FF4D4D; }
-    .badge-yellow { background-color: #FFC107; color: #2C3E50; }
-    .badge-green { background-color: #2ECC71; }
-    .badge-blue { background-color: #3498DB; }
-
-    /* メモ欄 */
+    /* メモ欄の文字を真っ黒に */
     .staff-memo {
         background-color: #F9F9F9; padding: 12px; border-radius: 8px;
-        font-size: 0.9rem; color: #555; margin-top: 15px; border-left: 4px solid #eee;
+        font-size: 0.95rem; 
+        color: #000000 !important; /* ここをグレーから黒に変更 */
+        margin-top: 15px; border-left: 4px solid #333;
     }
 
-    /* ボタン */
-    .stButton > button {
-        width: 100%; background-color: #2C3E50; color: white; border: none;
-        border-radius: 8px; font-weight: 700; padding: 10px 0; transition: 0.3s;
+    /* 先月の状態ラベル */
+    .last-month-label {
+        color: #000000 !important;
+        font-weight: bold;
     }
-    .stButton > button:hover { background-color: #34495E; }
+
+    /* トリアージバッジ（ここだけは読みやすさのため背景色に合わせて白文字を維持） */
+    .badge-red, .badge-green, .badge-blue { color: white !important; }
+    .badge-yellow { color: #000000 !important; } /* 黄色バッジだけは黒文字 */
     </style>
     """, unsafe_allow_html=True)
 
