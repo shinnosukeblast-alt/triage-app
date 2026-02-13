@@ -7,6 +7,7 @@ st.set_page_config(page_title="美.design 人材トリアージApp", layout="wid
 
 # --- 2. デザインの適用 (CSS) ---
 # --- デザインの適用 (CSS) ---
+# --- デザインの適用 (CSS) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
