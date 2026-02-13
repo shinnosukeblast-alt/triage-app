@@ -1,7 +1,27 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+# --- ログイン機能を追加 ---
+def check_password():
+    def password_entered():
+        if st.session_state["password"] == "bdesign2026": # 仮のパスワード
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]
+        else:
+            st.session_state["password_correct"] = False
 
+    if "password_correct" not in st.session_state:
+        st.text_input("パスワードを入力してください", type="password", on_change=password_entered, key="password")
+        return False
+    elif not st.session_state["password_correct"]:
+        st.text_input("パスワードが違います。再入力してください", type="password", on_change=password_entered, key="password")
+        st.error("😕 パスワードが正しくありません")
+        return False
+    else:
+        return True
+
+if not check_password():
+    st.stop() # パスワードが正しくない場合は、これより下のコードを実行しない
 # 画面の設定
 st.set_page_config(page_title="美.design 人材トリアージ", layout="wide")
 
