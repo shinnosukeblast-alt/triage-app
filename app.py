@@ -103,7 +103,7 @@ with st.sidebar:
     st.markdown("<h2 style='margin-top:0;'>⚙️ 管理メニュー</h2>", unsafe_allow_html=True)
     with st.expander("➕ 新規スタッフ追加"):
         new_name = st.text_input("氏名", placeholder="氏名を入力")
-        new_store = st.selectbox("配属店舗", ["京都店", "表参道店", "新宿店", "心斎橋店", "銀座店"])
+        new_store = st.selectbox("配属店舗", ["京都店", "表参道店", "新宿店", "心斎橋店", "銀座店", "上野店"])
         if st.button("追加実行", key="add_btn"):
             if new_name:
                 new_entry = {
