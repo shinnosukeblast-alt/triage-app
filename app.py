@@ -58,6 +58,7 @@ st.markdown("""
 
     /* サイドバー */
     section[data-testid="stSidebar"] {
+        min-width: 350px !important;
         background: rgba(240, 248, 255, 0.9) !important;
         backdrop-filter: blur(12px); border-right: 1px solid white;
     }
