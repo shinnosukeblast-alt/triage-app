@@ -5,7 +5,7 @@ from datetime import datetime
 # --- 1. 基本設定 ---
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 
-# --- 2. ユーザー管理（IDとパスワードと権限の台帳） ---
+# --- 2. ユーザー管理 ---
 USERS = {
     "manager": {"pass": "admin9999", "role": "admin", "assigned_store": "全店舗"},
     "kyoto":   {"pass": "kyoto001",  "role": "store", "assigned_store": "京都店"},
@@ -22,8 +22,7 @@ def check_login():
         st.markdown("""
             <style>
             .stApp { background-color: #f4f9ff; }
-            /* ログイン画面の入力カーソルも見やすく */
-            input { caret-color: #000000 !important; }
+            input { caret-color: #1a2a3a !important; }
             </style>
             """, unsafe_allow_html=True)
         
@@ -48,7 +47,7 @@ if not check_login():
 
 user = st.session_state.user_info
 
-# --- 4. デザイン適用 (カーソル修正済み) ---
+# --- 4. デザイン設定 ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -58,7 +57,7 @@ st.markdown("""
 
     /* サイドバー */
     section[data-testid="stSidebar"] {
-        min-width: 350px !important;
+        min-width: 300px !important;
         background: rgba(240, 248, 255, 0.9) !important;
         backdrop-filter: blur(12px); border-right: 1px solid white;
     }
@@ -73,26 +72,20 @@ st.markdown("""
     .main-header h1 { color: #ffffff !important; margin: 0; font-size: 1.5rem; }
     .user-status { color: white !important; font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;}
 
-    /* カードデザイン */
+    /* スタッフカード */
     .staff-card {
-        background: #ffffff; padding: 25px 25px 5px 25px;
-        border-radius: 20px 20px 0 0; border: 1px solid #e1eaf2; border-bottom: none;
-        margin-bottom: -16px !important; position: relative; z-index: 1;
+        background: #ffffff; padding: 20px;
+        border-radius: 20px; border: 1px solid #e1eaf2;
+        box-shadow: 0 10px 25px rgba(26, 42, 58, 0.05); margin-bottom: 20px;
+        position: relative; transition: transform 0.2s;
     }
-    
-    /* Expanderデザイン */
-    [data-testid="stExpander"] {
-        background-color: #ffffff !important; border: 1px solid #e1eaf2; border-top: none;
-        border-radius: 0 0 20px 20px; box-shadow: 0 10px 25px rgba(26, 42, 58, 0.05); margin-top: 0 !important;
-    }
-    [data-testid="stExpander"] summary { color: #5a6a7a !important; background-color: #ffffff !important; padding-left: 25px; }
-    [data-testid="stExpander"] summary:hover { color: #0056b3 !important; }
+    .staff-card:hover { transform: translateY(-5px); }
 
-    /* --- 【修正】入力フォームの設定 --- */
+    /* 入力フォーム */
     input, textarea, select, div[data-baseweb="select"] > div {
         background-color: #ffffff !important; 
         color: #1a2a3a !important; 
-        caret-color: #1a2a3a !important; /* ★ここが修正ポイント：カーソルを黒くする！ */
+        caret-color: #1a2a3a !important;
         border-color: #dbe9f5 !important;
     }
     ul[data-baseweb="menu"] { background-color: #ffffff !important; }
@@ -108,11 +101,11 @@ st.markdown("""
     span.badge-blue { background-color: #3498DB !important; color: white !important; }
     span.badge-yellow { background-color: #FFC107 !important; color: #1a2a3a !important; }
 
-    /* ボタン */
+    /* --- スタイリッシュなボタン --- */
     div.stButton > button {
         background: linear-gradient(135deg, #0061ff 0%, #60efff 100%) !important;
         color: white !important; border: none !important;
-        border-radius: 50px !important; padding: 0.6rem 1.5rem !important;
+        border-radius: 50px !important; padding: 0.5rem 1.2rem !important;
         font-weight: bold !important; letter-spacing: 0.05em !important;
         box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3) !important;
         transition: all 0.3s ease !important;
@@ -120,10 +113,6 @@ st.markdown("""
     div.stButton > button:hover {
         transform: translateY(-3px) scale(1.02) !important;
         box-shadow: 0 8px 25px rgba(0, 97, 255, 0.5) !important;
-    }
-    div.stButton > button:active {
-        transform: translateY(1px) !important;
-        box-shadow: 0 2px 10px rgba(0, 97, 255, 0.3) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -144,14 +133,35 @@ if 'staff_db' not in st.session_state:
             })
     st.session_state.staff_db = pd.DataFrame(initial_data)
 
-# --- 6. サイドバー ---
+# --- 6. ポップアップ編集画面の定義 (st.dialog) ---
+@st.dialog("📝 スタッフ評価の編集")
+def edit_dialog(row, idx):
+    st.markdown(f"**{row['店舗名']} / {row['氏名']}** さんの評価を更新します。")
+    
+    # 入力フォーム
+    new_status = st.selectbox("現在の状態", 
+        ["🔴 赤：今すぐ介入", "🟡 黄：育成・伴走", "🟢 緑：任せてOK", "🔵 青：次の店長候補"],
+        index=["🔴" in row["現在のトリアージ"], "🟡" in row["現在のトリアージ"], "🟢" in row["現在のトリアージ"], "🔵" in row["現在のトリアージ"]].index(True)
+    )
+    new_memo = st.text_area("店長メモ", value=row["店長のメモ"], height=150)
+    
+    col1, col2 = st.columns([1, 1])
+    with col2:
+        if st.button("保存して閉じる", use_container_width=True):
+            # 演出
+            if "🔵" in new_status and "🔵" not in row["現在のトリアージ"]: st.balloons()
+            elif "🟢" in new_status and "🟢" not in row["現在のトリアージ"]: st.snow()
+            
+            # データ更新
+            st.session_state.staff_db.loc[idx, ["現在のトリアージ", "店長のメモ", "最終更新日"]] = [new_status, new_memo, datetime.now().strftime("%Y-%m-%d")]
+            st.rerun()
+
+# --- 7. サイドバー ---
 with st.sidebar:
     st.markdown("### ⚙️ 管理メニュー")
     
-    # 新規追加
     with st.expander("➕ 新規スタッフ追加", expanded=True):
         new_name = st.text_input("氏名", placeholder="氏名を入力")
-        
         if user["role"] == "admin":
             new_store = st.selectbox("店舗", st.session_state.staff_db["店舗名"].unique())
         else:
@@ -170,23 +180,20 @@ with st.sidebar:
                 st.session_state.staff_db = pd.concat([st.session_state.staff_db, pd.DataFrame([new_entry])], ignore_index=True)
                 st.rerun()
 
-    # 削除機能 (管理者のみ)
     if user["role"] == "admin":
         with st.expander("🗑️ スタッフ削除 (管理者)"):
-            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"], key="delete_select_unique")
+            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"], key="del_unique")
             if st.button("削除実行", key="del_btn"):
                 st.session_state.staff_db = st.session_state.staff_db[st.session_state.staff_db["氏名"] != del_target]
                 st.rerun()
 
-    # レイアウト調整（ログアウトボタンを下へ）
     st.markdown("<br>" * 15, unsafe_allow_html=True) 
     st.markdown("---") 
-
     if st.button("ログアウト", key="logout_btn"):
         st.session_state.user_info = None
         st.rerun()
 
-# --- 7. メイン画面 ---
+# --- 8. メイン画面 ---
 st.markdown(f"""
     <div class="main-header">
         <h1>💎 美.design 人材トリアージApp</h1>
@@ -210,13 +217,14 @@ if len(df) == 0:
 else:
     for idx, (original_idx, row) in enumerate(df.iterrows()):
         with cols[idx % 3]:
-            # バッジクラス
+            # バッジ判定
             t_str = row["現在のトリアージ"]
             if "赤" in t_str: b_cls = "badge-red"
             elif "黄" in t_str: b_cls = "badge-yellow"
             elif "緑" in t_str: b_cls = "badge-green"
             else: b_cls = "badge-blue"
             
+            # カード表示（編集ボタンを押すとポップアップが開く）
             st.markdown(f"""
                 <div class="staff-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -224,19 +232,13 @@ else:
                         <span style="font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 3px 8px; border-radius: 5px;">先月: {row['先月の状態']}</span>
                     </div>
                     <span class="triage-badge {b_cls}">{row['現在のトリアージ']}</span>
-                    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin-top: 15px; border-left: 5px solid #0056b3;">
+                    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin-top: 15px; border-left: 5px solid #0056b3; margin-bottom: 15px;">
                         {row['店長のメモ']}
                     </div>
-                    <div style="text-align: right; font-size: 0.7rem; color: #aaa; margin-top: 5px;">最終更新: {row['最終更新日']}</div>
+                    <div style="text-align: right; font-size: 0.7rem; color: #aaa; margin-bottom: 10px;">最終更新: {row['最終更新日']}</div>
                 </div>
             """, unsafe_allow_html=True)
-            
-            with st.expander("編集"):
-                new_status = st.selectbox("評価更新", ["🔴 赤：今すぐ介入", "🟡 黄：育成・伴走", "🟢 緑：任せてOK", "🔵 青：次の店長候補"], key=f"s_{row['ID']}", index=["🔴" in row["現在のトリアージ"], "🟡" in row["現在のトリアージ"], "🟢" in row["現在のトリアージ"], "🔵" in row["現在のトリアージ"]].index(True))
-                new_memo = st.text_area("メモ", value=row["店長のメモ"], key=f"m_{row['ID']}")
-                
-                if st.button("保存する", key=f"b_{row['ID']}"):
-                    if "🔵" in new_status and "🔵" not in row["現在のトリアージ"]: st.balloons()
-                    elif "🟢" in new_status and "🟢" not in row["現在のトリアージ"]: st.snow()
-                    st.session_state.staff_db.loc[original_idx, ["現在のトリアージ", "店長のメモ", "最終更新日"]] = [new_status, new_memo, datetime.now().strftime("%Y-%m-%d")]
-                    st.rerun()
+
+            # ポップアップを呼び出すボタン
+            if st.button("編集する", key=f"edit_{row['ID']}", use_container_width=True):
+                edit_dialog(row, original_idx)rerun()
