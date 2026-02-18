@@ -6,13 +6,11 @@ from datetime import datetime
 st.set_page_config(page_title="美.design 人材トリアージApp", layout="wide", page_icon="💎")
 
 # --- 2. ユーザー管理（IDとパスワードと権限の台帳） ---
-# 実際はここを増やしていけば37店舗分作れます
 USERS = {
     "manager": {"pass": "admin9999", "role": "admin", "assigned_store": "全店舗"},
     "kyoto":   {"pass": "kyoto001",  "role": "store", "assigned_store": "京都店"},
     "omote":   {"pass": "omote002",  "role": "store", "assigned_store": "表参道店"},
     "shinjuku":{"pass": "shin003",   "role": "store", "assigned_store": "新宿店"},
-    # ... 他の店舗もここに追加 ...
 }
 
 # --- 3. ログイン機能 ---
@@ -20,12 +18,12 @@ def check_login():
     if "user_info" not in st.session_state:
         st.session_state.user_info = None
 
-    # ログインしていない場合、ログイン画面を表示
     if st.session_state.user_info is None:
         st.markdown("""
             <style>
             .stApp { background-color: #f4f9ff; }
-            .login-box { max-width: 400px; margin: 0 auto; padding-top: 100px; }
+            /* ログイン画面の入力カーソルも見やすく */
+            input { caret-color: #000000 !important; }
             </style>
             """, unsafe_allow_html=True)
         
@@ -33,7 +31,7 @@ def check_login():
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            username = st.text_input("ユーザーID", placeholder="例: kyoto")
+            username = st.text_input("ユーザーID", placeholder="例: manager")
             password = st.text_input("パスワード", type="password")
             
             if st.button("ログイン", use_container_width=True):
@@ -45,14 +43,12 @@ def check_login():
         return False
     return True
 
-# ログインチェック実行（ログインしてなければここで止まる）
 if not check_login():
     st.stop()
 
-# --- ログイン成功後のユーザー情報 ---
 user = st.session_state.user_info
 
-# --- 4. デザイン適用 (ログイン後) ---
+# --- 4. デザイン適用 (カーソル修正済み) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -62,8 +58,7 @@ st.markdown("""
 
     /* サイドバー */
     section[data-testid="stSidebar"] {
-        width: 350px !important;
-        background: rgba(240, 248, 255, 0.8) !important;
+        background: rgba(240, 248, 255, 0.9) !important;
         backdrop-filter: blur(12px); border-right: 1px solid white;
     }
 
@@ -81,20 +76,23 @@ st.markdown("""
     .staff-card {
         background: #ffffff; padding: 25px 25px 5px 25px;
         border-radius: 20px 20px 0 0; border: 1px solid #e1eaf2; border-bottom: none;
-        margin-bottom: -16px; position: relative; z-index: 1;
+        margin-bottom: -16px !important; position: relative; z-index: 1;
     }
     
     /* Expanderデザイン */
     [data-testid="stExpander"] {
         background-color: #ffffff !important; border: 1px solid #e1eaf2; border-top: none;
-        border-radius: 0 0 20px 20px; box-shadow: 0 10px 25px rgba(26, 42, 58, 0.05); margin-top: 0;
+        border-radius: 0 0 20px 20px; box-shadow: 0 10px 25px rgba(26, 42, 58, 0.05); margin-top: 0 !important;
     }
     [data-testid="stExpander"] summary { color: #5a6a7a !important; background-color: #ffffff !important; padding-left: 25px; }
     [data-testid="stExpander"] summary:hover { color: #0056b3 !important; }
 
-    /* 入力フォーム白化 */
+    /* --- 【修正】入力フォームの設定 --- */
     input, textarea, select, div[data-baseweb="select"] > div {
-        background-color: #ffffff !important; color: #1a2a3a !important; border-color: #dbe9f5 !important;
+        background-color: #ffffff !important; 
+        color: #1a2a3a !important; 
+        caret-color: #1a2a3a !important; /* ★ここが修正ポイント：カーソルを黒くする！ */
+        border-color: #dbe9f5 !important;
     }
     ul[data-baseweb="menu"] { background-color: #ffffff !important; }
 
@@ -109,33 +107,21 @@ st.markdown("""
     span.badge-blue { background-color: #3498DB !important; color: white !important; }
     span.badge-yellow { background-color: #FFC107 !important; color: #1a2a3a !important; }
 
-/* --- スタイリッシュなボタンデザイン --- */
+    /* ボタン */
     div.stButton > button {
-        /* 綺麗な色のグラデーション（海のような深い青〜鮮やかな水色） */
         background: linear-gradient(135deg, #0061ff 0%, #60efff 100%) !important;
-        
-        color: white !important; /* 文字は白 */
-        border: none !important;
-        border-radius: 50px !important; /* 完全に丸く（カプセル型） */
-        padding: 0.6rem 1.5rem !important; /* 少し大きめに */
-        font-weight: bold !important;
-        letter-spacing: 0.05em !important; /* 文字間隔を少し広げて高級感を出す */
-        
-        /* ふんわり光る影（ここがスタイリッシュのポイント） */
+        color: white !important; border: none !important;
+        border-radius: 50px !important; padding: 0.6rem 1.5rem !important;
+        font-weight: bold !important; letter-spacing: 0.05em !important;
         box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3) !important;
-        
-        transition: all 0.3s ease !important; /* 動くときの滑らかさ */
+        transition: all 0.3s ease !important;
     }
-
-    /* マウスを乗せたときのアニメーション */
     div.stButton > button:hover {
-        transform: translateY(-3px) scale(1.02) !important; /* ふわっと浮き上がる */
-        box-shadow: 0 8px 25px rgba(0, 97, 255, 0.5) !important; /* 光が強くなる */
+        transform: translateY(-3px) scale(1.02) !important;
+        box-shadow: 0 8px 25px rgba(0, 97, 255, 0.5) !important;
     }
-
-    /* クリックした瞬間 */
     div.stButton > button:active {
-        transform: translateY(1px) !important; /* 押した感触 */
+        transform: translateY(1px) !important;
         box-shadow: 0 2px 10px rgba(0, 97, 255, 0.3) !important;
     }
     </style>
@@ -146,7 +132,6 @@ this_month = datetime.now().strftime("%Y年%m月")
 
 if 'staff_db' not in st.session_state:
     stores = ["京都店", "表参道店", "新宿店", "心斎橋店", "銀座店"]
-    triage_levels = ["🔴 赤：今すぐ介入", "🟡 黄：育成・伴走", "🟢 緑：任せてOK", "🔵 青：次の店長候補"]
     initial_data = []
     for store in stores:
         for j in range(1, 4):
@@ -158,23 +143,21 @@ if 'staff_db' not in st.session_state:
             })
     st.session_state.staff_db = pd.DataFrame(initial_data)
 
-# --- 6. サイドバー（マネージャーのみ全機能、店長は自分の店舗の追加のみ） ---
+# --- 6. サイドバー ---
 with st.sidebar:
     st.markdown("### ⚙️ 管理メニュー")
     
-    # --- 1. 新規スタッフ追加 ---
-    with st.expander("➕ 新規スタッフ追加", expanded=True): # expanded=Trueで最初から開いておく
+    # 新規追加
+    with st.expander("➕ 新規スタッフ追加", expanded=True):
         new_name = st.text_input("氏名", placeholder="氏名を入力")
         
-        # 店舗選択ロジック
         if user["role"] == "admin":
             new_store = st.selectbox("店舗", st.session_state.staff_db["店舗名"].unique())
         else:
             new_store = user["assigned_store"]
             st.info(f"店舗: {new_store}")
 
-        # ボタンを少し目立たせる
-        if st.button("追加実行", key="add"):
+        if st.button("追加実行", key="add_btn"):
             if new_name:
                 new_entry = {
                     "ID": f"{new_store}_{datetime.now().timestamp()}",
@@ -186,52 +169,43 @@ with st.sidebar:
                 st.session_state.staff_db = pd.concat([st.session_state.staff_db, pd.DataFrame([new_entry])], ignore_index=True)
                 st.rerun()
 
-    # --- 2. スタッフ削除（マネージャーのみ） ---
-    # ※ 必要なければここは削除してもOKですが、管理用に残しておくと便利です
+    # 削除機能 (管理者のみ)
     if user["role"] == "admin":
         with st.expander("🗑️ スタッフ削除 (管理者)"):
-            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"])
-            if st.button("削除実行", key="del"):
+            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"], key="delete_select_unique")
+            if st.button("削除実行", key="del_btn"):
                 st.session_state.staff_db = st.session_state.staff_db[st.session_state.staff_db["氏名"] != del_target]
                 st.rerun()
 
-    # --- 3. レイアウト調整用スペーサー（ここが魔法のコード） ---
-    # この <br> の数（今は15個）を増減させて、ログアウトボタンの位置を調整してください
+    # レイアウト調整（ログアウトボタンを下へ）
     st.markdown("<br>" * 15, unsafe_allow_html=True) 
+    st.markdown("---") 
 
-    st.markdown("---") # 区切り線
-
-    # --- 4. ログアウトボタン（一番下） ---
-    if st.button("ログアウト", key="logout"):
+    if st.button("ログアウト", key="logout_btn"):
         st.session_state.user_info = None
         st.rerun()
-        
-# --- 7. メイン画面（権限による表示切り替え） ---
+
+# --- 7. メイン画面 ---
 st.markdown(f"""
     <div class="main-header">
-        <h1>美.design 人材トリアージ</h1>
+        <h1>💎 美.design 人材トリアージApp</h1>
         <span class="user-status">👤 {user['assigned_store']} ({user['role']})</span>
     </div>
     """, unsafe_allow_html=True)
 
-# 【重要】権限によるフィルタリングロジック
 if user["role"] == "admin":
-    # 管理者なら：ドロップダウンで全店舗から選べる
     selected_store = st.selectbox("表示店舗：", st.session_state.staff_db["店舗名"].unique())
 else:
-    # 店長なら：自分の店舗で固定（ドロップダウンを出さない）
     selected_store = user["assigned_store"]
     st.markdown(f"### 🏠 {selected_store} のスタッフ一覧")
 
-# 選択された店舗（または固定された店舗）でデータを絞り込み
 df = st.session_state.staff_db[st.session_state.staff_db["店舗名"] == selected_store]
 
-# --- 以下、カード表示ロジックは同じ ---
 st.subheader(f"👥 {selected_store} 一覧")
 cols = st.columns(3)
 
 if len(df) == 0:
-    st.info("まだスタッフが登録されていません。")
+    st.info("スタッフがまだ登録されていません。")
 else:
     for idx, (original_idx, row) in enumerate(df.iterrows()):
         with cols[idx % 3]:
@@ -249,7 +223,9 @@ else:
                         <span style="font-size: 0.75rem; color: #888; background: #f0f0f0; padding: 3px 8px; border-radius: 5px;">先月: {row['先月の状態']}</span>
                     </div>
                     <span class="triage-badge {b_cls}">{row['現在のトリアージ']}</span>
-                    <div class="memo-display">{row['店長のメモ']}</div>
+                    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin-top: 15px; border-left: 5px solid #0056b3;">
+                        {row['店長のメモ']}
+                    </div>
                     <div style="text-align: right; font-size: 0.7rem; color: #aaa; margin-top: 5px;">最終更新: {row['最終更新日']}</div>
                 </div>
             """, unsafe_allow_html=True)
