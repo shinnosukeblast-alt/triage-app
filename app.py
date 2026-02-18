@@ -160,22 +160,21 @@ if 'staff_db' not in st.session_state:
 
 # --- 6. サイドバー（マネージャーのみ全機能、店長は自分の店舗の追加のみ） ---
 with st.sidebar:
-    st.markdown("###管理メニュー")
+    st.markdown("### ⚙️ 管理メニュー")
     
-
-    st.markdown("---")
-    
-    with st.expander("新規スタッフ追加"):
+    # --- 1. 新規スタッフ追加 ---
+    with st.expander("➕ 新規スタッフ追加", expanded=True): # expanded=Trueで最初から開いておく
         new_name = st.text_input("氏名", placeholder="氏名を入力")
         
-        # 店舗選択ロジック：マネージャーなら選べる、店長なら自分の店で固定
+        # 店舗選択ロジック
         if user["role"] == "admin":
             new_store = st.selectbox("店舗", st.session_state.staff_db["店舗名"].unique())
         else:
             new_store = user["assigned_store"]
             st.info(f"店舗: {new_store}")
 
-        if st.button("実行", key="add"):
+        # ボタンを少し目立たせる
+        if st.button("追加実行", key="add"):
             if new_name:
                 new_entry = {
                     "ID": f"{new_store}_{datetime.now().timestamp()}",
@@ -186,6 +185,26 @@ with st.sidebar:
                 }
                 st.session_state.staff_db = pd.concat([st.session_state.staff_db, pd.DataFrame([new_entry])], ignore_index=True)
                 st.rerun()
+
+    # --- 2. スタッフ削除（マネージャーのみ） ---
+    # ※ 必要なければここは削除してもOKですが、管理用に残しておくと便利です
+    if user["role"] == "admin":
+        with st.expander("🗑️ スタッフ削除 (管理者)"):
+            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"])
+            if st.button("削除実行", key="del"):
+                st.session_state.staff_db = st.session_state.staff_db[st.session_state.staff_db["氏名"] != del_target]
+                st.rerun()
+
+    # --- 3. レイアウト調整用スペーサー（ここが魔法のコード） ---
+    # この <br> の数（今は15個）を増減させて、ログアウトボタンの位置を調整してください
+    st.markdown("<br>" * 15, unsafe_allow_html=True) 
+
+    st.markdown("---") # 区切り線
+
+    # --- 4. ログアウトボタン（一番下） ---
+    if st.button("ログアウト", key="logout"):
+        st.session_state.user_info = None
+        st.rerun()
 
     # 削除機能はマネージャー限定にする例（必要なら店長にも開放可）
     if user["role"] == "admin":
@@ -203,7 +222,7 @@ with st.sidebar:
 # --- 7. メイン画面（権限による表示切り替え） ---
 st.markdown(f"""
     <div class="main-header">
-        <h1>💎 美.design 人材トリアージApp</h1>
+        <h1>美.design 人材トリアージ</h1>
         <span class="user-status">👤 {user['assigned_store']} ({user['role']})</span>
     </div>
     """, unsafe_allow_html=True)
