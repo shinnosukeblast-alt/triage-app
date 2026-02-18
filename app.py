@@ -205,19 +205,6 @@ with st.sidebar:
     if st.button("ログアウト", key="logout"):
         st.session_state.user_info = None
         st.rerun()
-
-    # 削除機能はマネージャー限定にする例（必要なら店長にも開放可）
-    if user["role"] == "admin":
-        with st.expander("スタッフ消去 (管理者のみ)"):
-            del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"])
-            if st.button("削除実行", key="del"):
-                st.session_state.staff_db = st.session_state.staff_db[st.session_state.staff_db["氏名"] != del_target]
-                st.rerun()
-
-    # ログアウトボタン
-    if st.button("ログアウト", key="logout"):
-        st.session_state.user_info = None
-        st.rerun()
         
 # --- 7. メイン画面（権限による表示切り替え） ---
 st.markdown(f"""
