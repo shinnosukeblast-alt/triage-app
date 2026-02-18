@@ -109,11 +109,34 @@ st.markdown("""
     span.badge-blue { background-color: #3498DB !important; color: white !important; }
     span.badge-yellow { background-color: #FFC107 !important; color: #1a2a3a !important; }
 
-    /* ボタン */
+/* --- スタイリッシュなボタンデザイン --- */
     div.stButton > button {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
-        color: white !important; border: none; font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0, 150, 255, 0.3);
+        /* 綺麗な色のグラデーション（海のような深い青〜鮮やかな水色） */
+        background: linear-gradient(135deg, #0061ff 0%, #60efff 100%) !important;
+        
+        color: white !important; /* 文字は白 */
+        border: none !important;
+        border-radius: 50px !important; /* 完全に丸く（カプセル型） */
+        padding: 0.6rem 1.5rem !important; /* 少し大きめに */
+        font-weight: bold !important;
+        letter-spacing: 0.05em !important; /* 文字間隔を少し広げて高級感を出す */
+        
+        /* ふんわり光る影（ここがスタイリッシュのポイント） */
+        box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3) !important;
+        
+        transition: all 0.3s ease !important; /* 動くときの滑らかさ */
+    }
+
+    /* マウスを乗せたときのアニメーション */
+    div.stButton > button:hover {
+        transform: translateY(-3px) scale(1.02) !important; /* ふわっと浮き上がる */
+        box-shadow: 0 8px 25px rgba(0, 97, 255, 0.5) !important; /* 光が強くなる */
+    }
+
+    /* クリックした瞬間 */
+    div.stButton > button:active {
+        transform: translateY(1px) !important; /* 押した感触 */
+        box-shadow: 0 2px 10px rgba(0, 97, 255, 0.3) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -137,26 +160,22 @@ if 'staff_db' not in st.session_state:
 
 # --- 6. サイドバー（マネージャーのみ全機能、店長は自分の店舗の追加のみ） ---
 with st.sidebar:
-    st.markdown("### ⚙️ 管理メニュー")
+    st.markdown("###管理メニュー")
     
-    # ログアウトボタン
-    if st.button("ログアウト", key="logout"):
-        st.session_state.user_info = None
-        st.rerun()
 
     st.markdown("---")
     
-    with st.expander("➕ 新規スタッフ追加"):
+    with st.expander("新規スタッフ追加"):
         new_name = st.text_input("氏名", placeholder="氏名を入力")
         
         # 店舗選択ロジック：マネージャーなら選べる、店長なら自分の店で固定
         if user["role"] == "admin":
-            new_store = st.selectbox("配属店舗", st.session_state.staff_db["店舗名"].unique())
+            new_store = st.selectbox("店舗", st.session_state.staff_db["店舗名"].unique())
         else:
             new_store = user["assigned_store"]
-            st.info(f"配属店舗: {new_store}")
+            st.info(f"店舗: {new_store}")
 
-        if st.button("追加実行", key="add"):
+        if st.button("実行", key="add"):
             if new_name:
                 new_entry = {
                     "ID": f"{new_store}_{datetime.now().timestamp()}",
@@ -170,12 +189,17 @@ with st.sidebar:
 
     # 削除機能はマネージャー限定にする例（必要なら店長にも開放可）
     if user["role"] == "admin":
-        with st.expander("🗑️ スタッフ消去 (管理者のみ)"):
+        with st.expander("スタッフ消去 (管理者のみ)"):
             del_target = st.selectbox("削除対象", st.session_state.staff_db["氏名"])
             if st.button("削除実行", key="del"):
                 st.session_state.staff_db = st.session_state.staff_db[st.session_state.staff_db["氏名"] != del_target]
                 st.rerun()
 
+    # ログアウトボタン
+    if st.button("ログアウト", key="logout"):
+        st.session_state.user_info = None
+        st.rerun()
+        
 # --- 7. メイン画面（権限による表示切り替え） ---
 st.markdown(f"""
     <div class="main-header">
