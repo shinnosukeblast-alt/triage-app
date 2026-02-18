@@ -145,16 +145,15 @@ def edit_dialog(row, idx):
     )
     new_memo = st.text_area("店長メモ", value=row["店長のメモ"], height=150)
     
-    col1, col2 = st.columns([1, 1])
-    with col2:
-        if st.button("保存して閉じる", use_container_width=True):
-            # 演出
-            if "🔵" in new_status and "🔵" not in row["現在のトリアージ"]: st.balloons()
-            elif "🟢" in new_status and "🟢" not in row["現在のトリアージ"]: st.snow()
-            
-            # データ更新
-            st.session_state.staff_db.loc[idx, ["現在のトリアージ", "店長のメモ", "最終更新日"]] = [new_status, new_memo, datetime.now().strftime("%Y-%m-%d")]
-            st.rerun()
+    # 保存ボタン
+    if st.button("保存して閉じる", use_container_width=True):
+        # 演出
+        if "🔵" in new_status and "🔵" not in row["現在のトリアージ"]: st.balloons()
+        elif "🟢" in new_status and "🟢" not in row["現在のトリアージ"]: st.snow()
+        
+        # データ更新
+        st.session_state.staff_db.loc[idx, ["現在のトリアージ", "店長のメモ", "最終更新日"]] = [new_status, new_memo, datetime.now().strftime("%Y-%m-%d")]
+        st.rerun()
 
 # --- 7. サイドバー ---
 with st.sidebar:
@@ -224,7 +223,7 @@ else:
             elif "緑" in t_str: b_cls = "badge-green"
             else: b_cls = "badge-blue"
             
-            # カード表示（編集ボタンを押すとポップアップが開く）
+            # カード表示
             st.markdown(f"""
                 <div class="staff-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -239,6 +238,6 @@ else:
                 </div>
             """, unsafe_allow_html=True)
 
-            # ポップアップを呼び出すボタン
+            # ポップアップを呼び出すボタン（ここが修正箇所です）
             if st.button("編集する", key=f"edit_{row['ID']}", use_container_width=True):
-                edit_dialog(row, original_idx)rerun()
+                edit_dialog(row, original_idx)
